@@ -12,7 +12,7 @@
   --line: rgba(24, 15, 10, 0.18);         /* hairline rules */
   --radius: 14px;
 
-  --font-display: "Instrument Serif", Georgia, serif;
+  --font-display: "Newsreader", Georgia, serif;
   --font-body: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
 
   --content-w: 720px;       /* main text column */
@@ -54,6 +54,7 @@ button:focus-visible {
   border-bottom: 1px solid var(--line);
 }
 .topbar__inner {
+  position: relative;
   max-width: 1440px;
   margin: 0 auto;
   padding: 26px var(--page-pad);
@@ -66,6 +67,20 @@ button:focus-visible {
 .topbar__name { font-weight: 600; }
 .topbar__sep { color: var(--ink-soft); }
 .topbar__page { color: var(--ink-soft); }
+.topbar__nav {
+  position: absolute;
+  left: calc(50% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 500;
+}
+@media (max-width: 720px) {
+  .topbar__nav {
+    position: static;
+    transform: none;
+    margin-left: auto;
+  }
+}
 
 /* ---------- layout ---------- */
 .page {
@@ -109,7 +124,7 @@ button:focus-visible {
 /* ---------- info columns ---------- */
 .info {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 32px;
   padding: clamp(48px, 7vw, 110px) 0;
   font-size: 16px;
