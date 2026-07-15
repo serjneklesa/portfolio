@@ -42,38 +42,47 @@
   </footer>
 
   <script>
-    // ============================================================
-    // ЗАМЕНИ ЭТОТ СПИСОК на имена файлов из папки web-ready.
-    // Просто перечисли их через запятую, порядок = порядок в ленте.
-    // ============================================================
+    // Файлы из папки web-ready. Добавить фото = дописать строку сюда.
+    // Если файла нет — он просто пропустится, ничего не сломается.
+    const FOLDER = "web-ready/";
     const IMAGES = [
-      "web-ready/photo-01.jpg",
-      "web-ready/photo-02.jpg",
-      "web-ready/photo-03.jpg",
-      "web-ready/photo-04.jpg",
-      "web-ready/photo-05.jpg",
+      "1-5.jpg", "2-6.jpg", "3-4.jpg", "4-2.jpg", "4-3.jpg", "4.jpg",
+      "5-5.jpg", "7-1.jpg", "7-2.jpg", "9-1.jpg", "10-1.jpg", "13-1.jpg",
+      "bezymyannyi-kadr1943.jpg", "bezymyannyi-kadr1982.jpg",
+      "bluee.jpg", "fam-club.jpg", "flooriist-lenta-2.jpg",
+      "hardkiss1.jpg", "hope-2.jpg", "image-13-01-26-at-14-47.jpg",
+      "img-2022.jpg", "img-2845-2.jpg", "img-4454-2.jpg", "img-6008.jpg",
+      "img-6412-2.jpg", "img-6830-2.jpg", "img-6832-2.jpg",
+      "img-9614.jpg", "img-9857.jpg",
+      "katarina7.jpg", "katarina8.jpg", "linda-u-chulo.jpg",
+      "parfeniuk-3.jpg", "parfeniuk-12.jpg", "parfeniuk-16.jpg",
+      "parfenu-iuk-wall-2.jpg", "parfenuiuk-wall-2.jpg",
+      "sample-1.jpg", "sample-2.jpg", "sample-3.jpg",
+      "sasha-1.jpg", "summer-cover-2.jpg", "uj1-2.jpg",
+      "untitled-4-recovered.jpg",
     ];
 
     const track = document.getElementById("panorama-track");
-    const SPEED = 60; // px per second — увеличь, чтобы лента шла быстрее
+    const SPEED = 60; // px в секунду — можно увеличить
 
-    function build(list) {
-      // two identical copies -> seamless -50% loop
-      [...list, ...list].forEach(src => {
-        const img = document.createElement("img");
-        img.src = src;
-        img.alt = "";
-        img.loading = "eager";
-        img.onerror = () => img.remove(); // silently skip missing files
-        track.appendChild(img);
-      });
-      // constant speed regardless of how many photos there are
-      window.addEventListener("load", () => {
-        const distance = track.scrollWidth / 2;
+    // two identical copies -> seamless -50% loop
+    [...IMAGES, ...IMAGES].forEach(name => {
+      const img = document.createElement("img");
+      img.src = FOLDER + name;
+      img.alt = "";
+      img.decoding = "async";
+      img.onerror = () => img.remove(); // missing file -> skip silently
+      track.appendChild(img);
+    });
+
+    function setDuration() {
+      const distance = track.scrollWidth / 2;
+      if (distance > 0) {
         track.style.setProperty("--pan-duration", Math.max(20, distance / SPEED) + "s");
-      });
+      }
     }
-    build(IMAGES);
+    window.addEventListener("load", setDuration);
+    setTimeout(setDuration, 3000); // fallback while large images load
   </script>
 
 </body>
