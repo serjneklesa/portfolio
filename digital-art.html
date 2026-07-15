@@ -22,18 +22,15 @@
 
   <main class="page">
     <div class="content">
-
       <header class="case-head">
         <h1 class="reveal">Digital Art</h1>
         <p class="case-sub reveal">Illustration, graphics, and visual experiments.</p>
       </header>
+    </div>
 
-      <section class="case-body">
-        <div class="media media--photo"><span>Project Visual</span></div>
-        <div class="media media--photo"><span>Project Visual</span></div>
-        <div class="media media--photo"><span>Project Visual</span></div>
-      </section>
-
+    <!-- Infinite panorama -->
+    <div class="panorama" id="panorama">
+      <div class="panorama__track" id="panorama-track"></div>
     </div>
   </main>
 
@@ -43,6 +40,41 @@
       <span>Made in Vienna</span>
     </div>
   </footer>
+
+  <script>
+    // ============================================================
+    // ЗАМЕНИ ЭТОТ СПИСОК на имена файлов из папки web-ready.
+    // Просто перечисли их через запятую, порядок = порядок в ленте.
+    // ============================================================
+    const IMAGES = [
+      "web-ready/photo-01.jpg",
+      "web-ready/photo-02.jpg",
+      "web-ready/photo-03.jpg",
+      "web-ready/photo-04.jpg",
+      "web-ready/photo-05.jpg",
+    ];
+
+    const track = document.getElementById("panorama-track");
+    const SPEED = 60; // px per second — увеличь, чтобы лента шла быстрее
+
+    function build(list) {
+      // two identical copies -> seamless -50% loop
+      [...list, ...list].forEach(src => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "";
+        img.loading = "eager";
+        img.onerror = () => img.remove(); // silently skip missing files
+        track.appendChild(img);
+      });
+      // constant speed regardless of how many photos there are
+      window.addEventListener("load", () => {
+        const distance = track.scrollWidth / 2;
+        track.style.setProperty("--pan-duration", Math.max(20, distance / SPEED) + "s");
+      });
+    }
+    build(IMAGES);
+  </script>
 
 </body>
 </html>
