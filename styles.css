@@ -279,6 +279,18 @@ button:focus-visible {
   min-height: 0;
 }
 
+/* cover art shown at its natural ratio, no cropping */
+.media--cover {
+  aspect-ratio: auto;
+  min-height: 0;
+  display: block;
+}
+.media--cover img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
 /* artist block */
 .artist { margin-bottom: clamp(56px, 8vw, 110px); }
 .artist h2 {
