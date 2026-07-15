@@ -28,9 +28,15 @@
       </header>
     </div>
 
-    <!-- Infinite panorama -->
-    <div class="panorama" id="panorama">
-      <div class="panorama__track" id="panorama-track"></div>
+    <!-- Infinite panoramas: left / right (reversed) / left (shuffled) -->
+    <div class="panorama">
+      <div class="panorama__track" data-row="forward"></div>
+    </div>
+    <div class="panorama panorama--reverse">
+      <div class="panorama__track" data-row="backward"></div>
+    </div>
+    <div class="panorama">
+      <div class="panorama__track" data-row="random"></div>
     </div>
   </main>
 
@@ -62,27 +68,46 @@
       "untitled-4-recovered.jpg",
     ];
 
-    const track = document.getElementById("panorama-track");
-    const SPEED = 60; // px в секунду — можно увеличить
+    const SPEED = 60; // px per second
 
-    // two identical copies -> seamless -50% loop
-    [...IMAGES, ...IMAGES].forEach(name => {
-      const img = document.createElement("img");
-      img.src = FOLDER + name;
-      img.alt = "";
-      img.decoding = "async";
-      img.onerror = () => img.remove(); // missing file -> skip silently
-      track.appendChild(img);
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    const rows = {
+      forward:  IMAGES,
+      backward: [...IMAGES].reverse(),
+      random:   shuffle(IMAGES),
+    };
+
+    document.querySelectorAll(".panorama__track").forEach(track => {
+      const list = rows[track.dataset.row] || IMAGES;
+      // two identical copies -> seamless -50% loop
+      [...list, ...list].forEach(name => {
+        const img = document.createElement("img");
+        img.src = FOLDER + name;
+        img.alt = "";
+        img.decoding = "async";
+        img.onerror = () => img.remove(); // missing file -> skip silently
+        track.appendChild(img);
+      });
     });
 
-    function setDuration() {
-      const distance = track.scrollWidth / 2;
-      if (distance > 0) {
-        track.style.setProperty("--pan-duration", Math.max(20, distance / SPEED) + "s");
-      }
+    function setDurations() {
+      document.querySelectorAll(".panorama__track").forEach(track => {
+        const distance = track.scrollWidth / 2;
+        if (distance > 0) {
+          track.style.setProperty("--pan-duration", Math.max(20, distance / SPEED) + "s");
+        }
+      });
     }
-    window.addEventListener("load", setDuration);
-    setTimeout(setDuration, 3000); // fallback while large images load
+    window.addEventListener("load", setDurations);
+    setTimeout(setDurations, 3000); // fallback while large images load
   </script>
 
 </body>

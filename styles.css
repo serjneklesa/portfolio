@@ -27,6 +27,8 @@ html { scroll-behavior: smooth; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
+html, body { overflow-x: clip; }
+
 body {
   background: var(--bg);
   color: var(--ink);
@@ -115,26 +117,18 @@ button:focus-visible {
 .hero__video {
   position: absolute;
   z-index: 1; /* under the text */
-  left: 52%;
-  top: 30%;
-  width: min(46%, 620px);
+  left: 58%;
+  top: 32%;
+  width: clamp(200px, 42vw, 620px);
   aspect-ratio: 16 / 9;
-  border-radius: var(--radius);
   overflow: hidden;
-  background: var(--bg-frame);
+  /* no frame, no background: nothing visible except the video itself */
 }
 .hero__video iframe {
   width: 100%;
   height: 100%;
   border: 0;
   display: block;
-}
-@media (max-width: 900px) {
-  .hero__video {
-    position: static;
-    width: 100%;
-    margin-top: 32px;
-  }
 }
 .hero__lede {
   margin-top: clamp(40px, 6vw, 96px);
@@ -341,7 +335,7 @@ button:focus-visible {
   width: 100vw;
   margin-left: calc(50% - 50vw);
   overflow: hidden;
-  padding: clamp(28px, 4vw, 48px) 0;
+  padding: clamp(10px, 1.4vw, 18px) 0;
 }
 .panorama__track {
   display: flex;
@@ -352,7 +346,7 @@ button:focus-visible {
   animation: panorama-scroll var(--pan-duration, 60s) linear infinite;
 }
 .panorama__track img {
-  height: min(66vh, 560px);
+  height: min(28vh, 300px);
   width: auto;
   display: block;
   border-radius: var(--radius);
@@ -363,8 +357,9 @@ button:focus-visible {
   to   { transform: translateX(-50%); }
 }
 .panorama:hover .panorama__track { animation-play-state: paused; }
+.panorama--reverse .panorama__track { animation-direction: reverse; }
 @media (max-width: 640px) {
-  .panorama__track img { height: 46vh; }
+  .panorama__track img { height: 22vh; }
 }
 @media (prefers-reduced-motion: reduce) {
   .panorama { overflow-x: auto; }
@@ -412,4 +407,27 @@ button:focus-visible {
   margin-top: 22px;
   font-size: 18px;
   font-weight: 500;
+}
+
+
+/* ---------- video production ---------- */
+.vp-wide {
+  width: 100vw;
+  margin: clamp(24px, 3.5vw, 44px) calc(50% - 50vw);
+  aspect-ratio: 16 / 9;
+}
+.vp-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 2vw, 28px);
+  width: 100vw;
+  margin: clamp(24px, 3.5vw, 44px) calc(50% - 50vw);
+  padding: 0 var(--page-pad);
+}
+.vp-pair .vp-v { aspect-ratio: 9 / 16; }
+.vp-wide iframe, .vp-v iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
 }
