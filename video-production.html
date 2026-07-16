@@ -38,12 +38,6 @@
     <div class="panorama panorama--video">
       <div class="panorama__track" data-row="2"></div>
     </div>
-    <div class="panorama panorama--video panorama--reverse">
-      <div class="panorama__track" data-row="3"></div>
-    </div>
-    <div class="panorama panorama--video">
-      <div class="panorama__track" data-row="4"></div>
-    </div>
   </main>
 
   <footer class="footer">
@@ -114,11 +108,10 @@
         VIDEOS.map(async id => ({ id, ratio: await ratioOf(id) }))
       );
 
-      // split the videos across the five rows
-      const rows = [[], [], [], [], []];
-      meta.forEach((m, i) => rows[i % 5].push(m));
-      rows[1].reverse(); // right-running rows start from the end
-      rows[3].reverse();
+      // split the videos across the three rows
+      const rows = [[], [], []];
+      meta.forEach((m, i) => rows[i % 3].push(m));
+      rows[1].reverse(); // middle row runs right and starts from the end
 
       document.querySelectorAll(".panorama--video .panorama__track").forEach(track => {
         const list = rows[+track.dataset.row] || [];
