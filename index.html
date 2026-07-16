@@ -16,8 +16,11 @@
     <div class="topbar__inner">
       <a class="topbar__name" href="index.html">S/N</a>
       <span class="topbar__sep">/</span>
-      <span class="topbar__page">Home</span>
-      <a class="topbar__nav" href="selected-work.html">Selected Work</a>
+      <span class="topbar__page" data-i18n="page.home">Home</span>
+      <a class="topbar__nav" href="selected-work.html" data-i18n="nav.selectedwork">Selected Work</a>
+      <div class="topbar__lang">
+        <button type="button" data-setlang="en">EN</button><span class="topbar__sep">/</span><button type="button" data-setlang="de">DE</button>
+      </div>
     </div>
   </header>
 
@@ -26,13 +29,13 @@
 
       <!-- Hero -->
       <section class="hero">
-        <h1 class="hero__title reveal">
+        <h1 class="hero__title reveal" data-i18n="hero.title">
           Serj Neklesa is a multimedia designer, videographer, and marketing specialist based in <em>Vienna</em>.
         </h1>
         <div class="hero__video" aria-hidden="true">
           <iframe src="https://player.vimeo.com/video/1209245580?background=1&autoplay=1&muted=1&loop=1&playsinline=1" title="Showreel" allow="autoplay; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
-        <p class="hero__lede reveal">
+        <p class="hero__lede reveal" data-i18n="hero.lede">
           Creating visual content and digital experiences
           that connect brands with their audiences.
         </p>
@@ -40,7 +43,7 @@
 
       <!-- Selected Work link (swapped with the video) -->
       <section class="home-cta">
-        <a href="selected-work.html">Selected Work <span class="arrow">→</span></a>
+        <a href="selected-work.html"><span data-i18n="nav.selectedwork">Selected Work</span> <span class="arrow">→</span></a>
       </section>
 
       <!-- Skills -->
@@ -76,27 +79,27 @@
 
       <!-- Experience -->
       <section class="section" id="experience">
-        <p class="eyebrow">Experience</p>
+        <p class="eyebrow" data-i18n="exp.eyebrow">Experience</p>
         <ul class="entries">
           <li class="entry entry--static">
             <span>
               <span class="entry__title">United Nude Austria GmbH</span><br>
-              <span class="entry__meta">2026–Present <span class="dot">·</span> Marketing Manager &amp; Content Creator</span><br>
-              <span class="entry__meta">Vienna, Austria</span>
+              <span class="entry__meta" data-i18n="exp.une.meta">2026–Present <span class="dot">·</span> Marketing Manager &amp; Content Creator</span><br>
+              <span class="entry__meta" data-i18n="exp.une.loc">Vienna, Austria</span>
             </span>
           </li>
           <li class="entry entry--static">
             <span>
               <span class="entry__title">F Company GmbH</span><br>
-              <span class="entry__meta">2024–2026 <span class="dot">·</span> Marketing Manager</span><br>
-              <span class="entry__meta">Vienna, Austria</span>
+              <span class="entry__meta" data-i18n="exp.fc.meta">2024–2026 <span class="dot">·</span> Marketing Manager</span><br>
+              <span class="entry__meta" data-i18n="exp.fc.loc">Vienna, Austria</span>
             </span>
           </li>
           <li class="entry entry--static">
             <span>
               <span class="entry__title">Media Group Ukraine</span><br>
-              <span class="entry__meta">2021–2023 <span class="dot">·</span> Special Projects Specialist</span><br>
-              <span class="entry__meta">Kyiv, Ukraine</span>
+              <span class="entry__meta" data-i18n="exp.mgu.meta">2021–2023 <span class="dot">·</span> Special Projects Specialist</span><br>
+              <span class="entry__meta" data-i18n="exp.mgu.loc">Kyiv, Ukraine</span>
             </span>
           </li>
         </ul>
@@ -104,18 +107,15 @@
 
       <!-- Invitation -->
       <section class="section" id="lets-create">
-        <p class="eyebrow">Let's Create</p>
-        <p class="invite">
-          Hi! Got an idea, a brand, or just a feeling?<br>
-          <em>Let's create something together.</em>
-        </p>
-        <p class="invite-link"><a href="mailto:neklesa.sergej@gmail.com">Say hello ↗</a></p>
+        <p class="eyebrow" data-i18n="lets.eyebrow">Let's Create</p>
+        <p class="invite" data-i18n="lets.text">Hi! Got an idea, a brand, or just a feeling?<br><em>Let's create something together.</em></p>
+        <p class="invite-link"><a href="mailto:neklesa.sergej@gmail.com" data-i18n="lets.cta">Say hello ↗</a></p>
       </section>
 
       <!-- Contact -->
       <section class="info">
         <div>
-          <h2>Contact</h2>
+          <h2 data-i18n="contact.h">Contact</h2>
           <ul>
             <li><a href="mailto:neklesa.sergej@gmail.com">neklesa.sergej@gmail.com</a></li>
             <li><a href="https://www.instagram.com/ottoyvo/" target="_blank" rel="noopener">Instagram</a></li>
@@ -153,5 +153,6 @@
     fitVimeo(document.querySelector(".hero__video"), "1209245580");
   </script>
 
+  <script src="i18n.js"></script>
 </body>
 </html>

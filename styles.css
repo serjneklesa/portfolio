@@ -491,3 +491,25 @@ button:focus-visible {
   .panorama--video .panorama__track img { height: 20vh; }
 }
 
+
+
+/* ---------- language switcher ---------- */
+.topbar__lang {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.topbar__lang button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.topbar__lang button.is-active {
+  color: var(--ink);
+  font-weight: 600;
+}
+.topbar__lang button:hover { color: var(--ink); }

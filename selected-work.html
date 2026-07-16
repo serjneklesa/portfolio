@@ -16,8 +16,11 @@
     <div class="topbar__inner">
       <a class="topbar__name" href="index.html">S/N</a>
       <span class="topbar__sep">/</span>
-      <span class="topbar__page">Selected Work</span>
-      <a class="topbar__nav" href="index.html">Home</a>
+      <span class="topbar__page" data-i18n="nav.selectedwork">Selected Work</span>
+      <a class="topbar__nav" href="index.html" data-i18n="nav.home">Home</a>
+      <div class="topbar__lang">
+        <button type="button" data-setlang="en">EN</button><span class="topbar__sep">/</span><button type="button" data-setlang="de">DE</button>
+      </div>
     </div>
   </header>
 
@@ -25,15 +28,12 @@
     <div class="content">
 
       <header class="case-head">
-        <h1 class="reveal">Selected Work</h1>
-        <p class="case-sub reveal">
-          Nine years of design for television, live events,
-          and artists — from broadcast graphics to brand content.
-        </p>
+        <h1 class="reveal" data-i18n="sw.h1">Selected Work</h1>
+        <p class="case-sub reveal" data-i18n="sw.sub">Nine years of design for television, live events, and artists — from broadcast graphics to brand content.</p>
       </header>
 
       <section class="section">
-        <p class="eyebrow">Categories</p>
+        <p class="eyebrow" data-i18n="sw.categories">Categories</p>
         <ul class="entries">
           <li class="entry">
             <a href="artist-collaboration.html">
@@ -48,7 +48,7 @@
             <a href="digital-art.html">
               <span>
                 <span class="entry__title">Digital Art</span><br>
-                <span class="entry__meta">Illustration &amp; Graphics</span>
+                <span class="entry__meta" data-i18n="cat.digital.meta">Illustration &amp; Graphics</span>
               </span>
               <span class="entry__arrow">↗</span>
             </a>
@@ -57,7 +57,7 @@
             <a href="video-production.html">
               <span>
                 <span class="entry__title">Video Production</span><br>
-                <span class="entry__meta">Filming &amp; Post-Production</span>
+                <span class="entry__meta" data-i18n="cat.video.meta">Filming &amp; Post-Production</span>
               </span>
               <span class="entry__arrow">↗</span>
             </a>
@@ -66,7 +66,7 @@
             <a href="social-media.html">
               <span>
                 <span class="entry__title">Social Media</span><br>
-                <span class="entry__meta">Content Strategy &amp; Creation</span>
+                <span class="entry__meta" data-i18n="cat.social.meta">Content Strategy &amp; Creation</span>
               </span>
               <span class="entry__arrow">↗</span>
             </a>
@@ -76,16 +76,16 @@
 
       <section class="case-meta">
         <div>
-          <h3>Focus</h3>
-          <p>Visual storytelling / strong brand identity</p>
+          <h3 data-i18n="meta.focus">Focus</h3>
+          <p data-i18n="meta.focus.value">Visual storytelling / strong brand identity</p>
         </div>
         <div>
-          <h3>Years</h3>
-          <p>2016 — Present</p>
+          <h3 data-i18n="meta.years">Years</h3>
+          <p data-i18n="meta.years.value">2016 — Present</p>
         </div>
         <div>
-          <h3>Based in</h3>
-          <p>Vienna, Austria <span class="dot">·</span> since 2024</p>
+          <h3 data-i18n="meta.based">Based in</h3>
+          <p data-i18n="meta.based.value">Vienna, Austria <span class="dot">·</span> since 2024</p>
         </div>
       </section>
 
@@ -99,5 +99,6 @@
     </div>
   </footer>
 
+  <script src="i18n.js"></script>
 </body>
 </html>

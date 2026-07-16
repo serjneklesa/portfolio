@@ -16,7 +16,10 @@
       <a class="topbar__name" href="index.html">S/N</a>
       <span class="topbar__sep">/</span>
       <span class="topbar__page">Social Media</span>
-      <a class="topbar__nav" href="selected-work.html">Selected Work</a>
+      <a class="topbar__nav" href="selected-work.html" data-i18n="nav.selectedwork">Selected Work</a>
+      <div class="topbar__lang">
+        <button type="button" data-setlang="en">EN</button><span class="topbar__sep">/</span><button type="button" data-setlang="de">DE</button>
+      </div>
     </div>
   </header>
 
@@ -24,7 +27,7 @@
     <div class="content">
       <header class="case-head">
         <h1 class="reveal">Social Media</h1>
-        <p class="case-sub reveal">Content strategy and creation for social platforms.</p>
+        <p class="case-sub reveal" data-i18n="sm.sub">Content strategy and creation for social platforms.</p>
       </header>
     </div>
 
@@ -41,12 +44,9 @@
 
     <div class="content">
       <section class="section" id="lets-create">
-        <p class="eyebrow">Let's Create</p>
-        <p class="invite">
-          Hi! Got an idea, a brand, or just a feeling?<br>
-          <em>Let's create something together.</em>
-        </p>
-        <p class="invite-link"><a href="mailto:neklesa.sergej@gmail.com">Say hello ↗</a></p>
+        <p class="eyebrow" data-i18n="lets.eyebrow">Let's Create</p>
+        <p class="invite" data-i18n="lets.text">Hi! Got an idea, a brand, or just a feeling?<br><em>Let's create something together.</em></p>
+        <p class="invite-link"><a href="mailto:neklesa.sergej@gmail.com" data-i18n="lets.cta">Say hello ↗</a></p>
       </section>
     </div>
   </main>
@@ -164,5 +164,6 @@
     build();
   </script>
 
+  <script src="i18n.js"></script>
 </body>
 </html>
