@@ -91,30 +91,16 @@
     const HASHES = {"1210442646": "eba0e2037d", "1210442671": "bf5715b22d", "1210442695": "1366e94a4b", "1210442717": "c62bf89a0a", "1210442742": "bdb9a1750c", "1210442745": "1aa7bc77d4", "1210442799": "1704214c0f", "1210442843": "85bad5aafd", "1210442886": "b5ee377771"};
     const SPEED = 45; // px per second
 
-    async function metaOf(id) {
-      try {
-        const r = await fetch("https://vimeo.com/api/oembed.json?url=" +
-          encodeURIComponent("https://vimeo.com/" + id + (HASHES[id] ? "/" + HASHES[id] : "")));
-        const j = await r.json();
-        return {
-          id,
-          ratio: (j.width && j.height) ? j.width + " / " + j.height : "16 / 9",
-          thumb: j.thumbnail_url || "",
-        };
-      } catch (e) { return null; } // unavailable video -> skipped entirely
-    }
+    // 1) The panorama is built IMMEDIATELY and unconditionally,
+    //    so it always moves even if Vimeo API is blocked or slow.
+    // 2) Vimeo oEmbed then refines each cell (real aspect ratio + thumbnail).
+    // 3) Players are switched on one by one, jumping between rows.
 
-    function makeCell(m) {
+    function makeCell(id) {
       const cell = document.createElement("div");
       cell.className = "pan-v";
-      cell.style.aspectRatio = m.ratio;
-      const img = document.createElement("img");
-      img.src = m.thumb;
-      img.alt = "";
-      img.decoding = "async";
-      img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block";
-      cell.appendChild(img);
-      cell.dataset.id = m.id;
+      cell.style.aspectRatio = "16 / 9";
+      cell.dataset.id = id;
       return cell;
     }
 
@@ -127,53 +113,66 @@
       f.title = "Video " + id;
       f.allow = "autoplay; fullscreen; picture-in-picture";
       cell.replaceChildren(f);
+      cell.dataset.live = "1";
     }
 
-    async function build() {
-      const meta = (await Promise.all(VIDEOS.map(metaOf))).filter(Boolean);
+    const setDurations = () => {
+      document.querySelectorAll(".panorama__track").forEach(track => {
+        const distance = track.scrollWidth / 2;
+        if (distance > 0) {
+          track.style.setProperty("--pan-duration", Math.max(30, distance / SPEED) + "s");
+        }
+      });
+    };
 
+    function build() {
       // split the videos across the three rows
       const rows = [[], [], []];
-      meta.forEach((m, i) => rows[i % 3].push(m));
+      VIDEOS.forEach((id, i) => rows[i % 3].push(id));
       rows[1].reverse(); // middle row runs right and starts from the end
 
-      const cells = [];
-      document.querySelectorAll(".panorama--video .panorama__track").forEach(track => {
+      document.querySelectorAll(".panorama__track").forEach(track => {
         const list = rows[+track.dataset.row] || [];
         // two identical copies -> seamless -50% loop
-        [...list, ...list].forEach(m => {
-          const c = makeCell(m);
-          track.appendChild(c);
-          cells.push(c);
-        });
+        [...list, ...list].forEach(id => track.appendChild(makeCell(id)));
       });
-
-      const setDurations = () => {
-        document.querySelectorAll(".panorama--video .panorama__track").forEach(track => {
-          const distance = track.scrollWidth / 2;
-          if (distance > 0) {
-            track.style.setProperty("--pan-duration", Math.max(30, distance / SPEED) + "s");
-          }
-        });
-      };
       setDurations();
-      setTimeout(setDurations, 2500);
 
-      // bring players alive gradually, jumping between rows (round-robin)
-      // so ALL rows start moving and playing right away
-      const byRow = [...document.querySelectorAll(".panorama__track")].map(track =>
-        [...track.querySelectorAll(".pan-v")]
+      // activation order: round-robin between rows so all rows play at once
+      const byRow = [...document.querySelectorAll(".panorama__track")].map(t =>
+        [...t.querySelectorAll(".pan-v")]
       );
       const order = [];
       const maxLen = Math.max(...byRow.map(r => r.length), 0);
-      for (let k = 0; k < maxLen; k++) {
-        byRow.forEach(row => { if (row[k]) order.push(row[k]); });
-      }
+      for (let k = 0; k < maxLen; k++) byRow.forEach(r => { if (r[k]) order.push(r[k]); });
+
       let i = 0;
       const timer = setInterval(() => {
-        if (i >= order.length) return clearInterval(timer);
+        if (i >= order.length) { clearInterval(timer); return; }
         activate(order[i++]);
       }, 200);
+
+      // enrich cells with real ratios and thumbnails (non-blocking, best effort)
+      VIDEOS.forEach(async id => {
+        try {
+          const r = await fetch("https://vimeo.com/api/oembed.json?url=" +
+            encodeURIComponent("https://vimeo.com/" + id + (HASHES[id] ? "/" + HASHES[id] : "")));
+          const j = await r.json();
+          document.querySelectorAll('.pan-v[data-id="' + id + '"]').forEach(cell => {
+            if (j.width && j.height) cell.style.aspectRatio = j.width + " / " + j.height;
+            if (!cell.dataset.live && j.thumbnail_url) {
+              const img = document.createElement("img");
+              img.src = j.thumbnail_url;
+              img.alt = "";
+              img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block";
+              cell.replaceChildren(img);
+            }
+          });
+          setDurations();
+        } catch (e) {}
+      });
+
+      setTimeout(setDurations, 2500);
     }
     build();
 

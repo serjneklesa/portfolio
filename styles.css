@@ -491,8 +491,3 @@ button:focus-visible {
   .panorama--video .panorama__track img { height: 20vh; }
 }
 
-
-/* ---------- matrix decode effect ---------- */
-.matrix { color: #ffffff; }
-.home-cta a { text-decoration: none; }
-.home-cta .arrow { color: #ffffff; }

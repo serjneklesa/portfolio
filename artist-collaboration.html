@@ -96,95 +96,90 @@
 
     const SPEED = 45;
 
-    async function metaOf(ref) {
-      if (ref.startsWith("yt:")) {
-        const id = ref.slice(3);
-        return {
-          ref, ratio: "16 / 9",
-          thumb: "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg",
-          src: "https://www.youtube.com/embed/" + id, // YouTube: no autoplay
-        };
-      }
-      try {
-        const r = await fetch("https://vimeo.com/api/oembed.json?url=" +
-          encodeURIComponent("https://vimeo.com/" + ref));
-        const j = await r.json();
-        return {
-          ref,
-          ratio: (j.width && j.height) ? j.width + " / " + j.height : "16 / 9",
-          thumb: j.thumbnail_url || "",
-          src: "https://player.vimeo.com/video/" + ref +
-               "?background=1&autoplay=1&muted=1&loop=1&playsinline=1",
-        };
-      } catch (e) { return null; } // unavailable video -> skipped entirely
+    function srcOf(ref) {
+      if (ref.startsWith("yt:")) return "https://www.youtube.com/embed/" + ref.slice(3); // YouTube: no autoplay
+      return "https://player.vimeo.com/video/" + ref +
+             "?background=1&autoplay=1&muted=1&loop=1&playsinline=1";
     }
 
-    function makeCell(m) {
+    function makeCell(ref) {
       const cell = document.createElement("div");
       cell.className = "pan-v";
-      cell.style.aspectRatio = m.ratio;
-      const img = document.createElement("img");
-      img.src = m.thumb;
-      img.alt = "";
-      img.decoding = "async";
-      img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block";
-      cell.appendChild(img);
-      cell.dataset.src = m.src;
-      cell.dataset.yt = m.ref.startsWith("yt:") ? "1" : "";
+      cell.style.aspectRatio = "16 / 9";
+      cell.dataset.ref = ref;
+      if (ref.startsWith("yt:")) {
+        const img = document.createElement("img");
+        img.src = "https://i.ytimg.com/vi/" + ref.slice(3) + "/hqdefault.jpg";
+        img.alt = "";
+        img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block";
+        cell.appendChild(img);
+      }
       return cell;
     }
 
     function activate(cell) {
-      // swap the thumbnail for a live player
+      const ref = cell.dataset.ref;
       const f = document.createElement("iframe");
-      f.src = cell.dataset.src;
+      f.src = srcOf(ref);
       f.title = "Video";
       f.allow = "autoplay; fullscreen; picture-in-picture";
-      if (cell.dataset.yt) f.allowFullscreen = true;
+      if (ref.startsWith("yt:")) f.allowFullscreen = true;
       cell.replaceChildren(f);
+      cell.dataset.live = "1";
     }
 
-    async function build() {
-      const meta = (await Promise.all(VIDEOS.map(metaOf))).filter(Boolean);
+    const setDurations = () => {
+      document.querySelectorAll(".panorama__track").forEach(track => {
+        const distance = track.scrollWidth / 2;
+        if (distance > 0) track.style.setProperty("--pan-duration", Math.max(30, distance / SPEED) + "s");
+      });
+    };
 
+    function build() {
       const rows = [[], [], []];
-      meta.forEach((m, i) => rows[i % 3].push(m));
+      VIDEOS.forEach((ref, i) => rows[i % 3].push(ref));
       rows[1].reverse();
 
-      const cells = [];
       document.querySelectorAll(".panorama__track").forEach(track => {
         const list = rows[+track.dataset.row] || [];
-        [...list, ...list].forEach(m => {
-          const c = makeCell(m);
-          track.appendChild(c);
-          cells.push(c);
-        });
+        [...list, ...list].forEach(ref => track.appendChild(makeCell(ref)));
       });
-
-      const setDurations = () => {
-        document.querySelectorAll(".panorama__track").forEach(track => {
-          const distance = track.scrollWidth / 2;
-          if (distance > 0) track.style.setProperty("--pan-duration", Math.max(30, distance / SPEED) + "s");
-        });
-      };
       setDurations();
-      setTimeout(setDurations, 2500);
 
-      // bring players alive gradually, jumping between rows (round-robin)
-      // so ALL rows start moving and playing right away
-      const byRow = [...document.querySelectorAll(".panorama__track")].map(track =>
-        [...track.querySelectorAll(".pan-v")]
+      const byRow = [...document.querySelectorAll(".panorama__track")].map(t =>
+        [...t.querySelectorAll(".pan-v")]
       );
       const order = [];
       const maxLen = Math.max(...byRow.map(r => r.length), 0);
-      for (let k = 0; k < maxLen; k++) {
-        byRow.forEach(row => { if (row[k]) order.push(row[k]); });
-      }
+      for (let k = 0; k < maxLen; k++) byRow.forEach(r => { if (r[k]) order.push(r[k]); });
+
       let i = 0;
       const timer = setInterval(() => {
-        if (i >= order.length) return clearInterval(timer);
+        if (i >= order.length) { clearInterval(timer); return; }
         activate(order[i++]);
       }, 200);
+
+      // best-effort: real ratios + thumbnails for vimeo cells
+      VIDEOS.filter(r => !r.startsWith("yt:")).forEach(async ref => {
+        try {
+          const r = await fetch("https://vimeo.com/api/oembed.json?url=" +
+            encodeURIComponent("https://vimeo.com/" + ref));
+          const j = await r.json();
+          document.querySelectorAll('.pan-v[data-ref="' + ref + '"]').forEach(cell => {
+            if (j.width && j.height) cell.style.aspectRatio = j.width + " / " + j.height;
+            if (!cell.dataset.live && j.thumbnail_url) {
+              const img = document.createElement("img");
+              img.src = j.thumbnail_url;
+              img.alt = "";
+              img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block";
+              cell.replaceChildren(img);
+            }
+          });
+          setDurations();
+        } catch (e) {}
+      });
+
+      setTimeout(setDurations, 2500);
     }
     build();
   </script>
