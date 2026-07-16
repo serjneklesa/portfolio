@@ -170,12 +170,21 @@
       setDurations();
       setTimeout(setDurations, 2500);
 
-      // bring players alive gradually so the page stays fast
+      // bring players alive gradually, jumping between rows (round-robin)
+      // so ALL rows start moving and playing right away
+      const byRow = [...document.querySelectorAll(".panorama__track")].map(track =>
+        [...track.querySelectorAll(".pan-v")]
+      );
+      const order = [];
+      const maxLen = Math.max(...byRow.map(r => r.length), 0);
+      for (let k = 0; k < maxLen; k++) {
+        byRow.forEach(row => { if (row[k]) order.push(row[k]); });
+      }
       let i = 0;
       const timer = setInterval(() => {
-        if (i >= cells.length) return clearInterval(timer);
-        activate(cells[i++]);
-      }, 350);
+        if (i >= order.length) return clearInterval(timer);
+        activate(order[i++]);
+      }, 200);
     }
     build();
   </script>

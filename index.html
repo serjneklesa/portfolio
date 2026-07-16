@@ -40,7 +40,7 @@
 
       <!-- Selected Work link (swapped with the video) -->
       <section class="home-cta">
-        <a href="selected-work.html">Selected Work <span class="arrow">→</span></a>
+        <a href="selected-work.html"><span class="matrix" data-text="Selected Work">Selected Work</span> <span class="arrow">→</span></a>
       </section>
 
       <!-- Skills -->
@@ -112,23 +112,14 @@
         <p class="invite-link"><a href="mailto:neklesa.sergej@gmail.com">Say hello ↗</a></p>
       </section>
 
-      <!-- Info columns -->
+      <!-- Contact -->
       <section class="info">
         <div>
           <h2>Contact</h2>
           <ul>
             <li><a href="mailto:neklesa.sergej@gmail.com">neklesa.sergej@gmail.com</a></li>
+            <li><a href="https://www.instagram.com/ottoyvo/" target="_blank" rel="noopener">Instagram</a></li>
           </ul>
-        </div>
-        <div>
-          <h2>Social</h2>
-          <ul>
-            <li><a href="#" target="_blank" rel="noopener">LinkedIn</a></li>
-            <li><a href="#" target="_blank" rel="noopener">Instagram</a></li>
-          </ul>
-        </div>
-        <div class="info__video" id="info-video">
-          <iframe src="https://player.vimeo.com/video/587701845?background=1&autoplay=1&muted=1&loop=1&playsinline=1" title="Video" allow="autoplay; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
       </section>
 
@@ -148,6 +139,7 @@
     </div>
   </footer>
 
+  <script src="matrix.js"></script>
   <script>
     // ask Vimeo for the real aspect ratio of each video so the frame
     // matches the video exactly (no black bars / visible container)
@@ -160,7 +152,6 @@
       } catch (e) {}
     }
     fitVimeo(document.querySelector(".hero__video"), "1209245580");
-    fitVimeo(document.getElementById("info-video"), "587701845");
   </script>
 
 </body>
