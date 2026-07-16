@@ -119,7 +119,7 @@ button:focus-visible {
   z-index: 1; /* under the text */
   left: 56%;
   top: 32%;
-  width: clamp(180px, 28vw, 440px);
+  width: clamp(130px, 20vw, 310px);
   aspect-ratio: 16 / 9;
   overflow: hidden;
   /* no frame, no background: nothing visible except the video itself */
@@ -135,7 +135,7 @@ button:focus-visible {
   .hero__video {
     left: 30%;
     top: 15%;
-    width: 54vw;
+    width: 38vw;
   }
 }
 .hero__lede {
@@ -227,7 +227,7 @@ button:focus-visible {
 .entry--static .entry__title { margin-bottom: 2px; }
 
 /* ---------- case study ---------- */
-.case-head { padding: clamp(56px, 8vw, 110px) 0 0; }
+.case-head { padding: clamp(56px, 8vw, 110px) 0 22px; }
 .case-head h1 {
   font-family: var(--font-display);
   font-weight: 400;
@@ -261,7 +261,7 @@ button:focus-visible {
 }
 .case-meta p { font-size: 17px; font-weight: 500; }
 @media (max-width: 640px) {
-  .case-meta { grid-template-columns: 1fr; gap: 20px; }
+  .case-meta { grid-template-columns: 1fr; gap: 20px; border-top: none; border-bottom: none; }
 }
 
 .case-body h2 {
@@ -452,8 +452,8 @@ button:focus-visible {
   border: 0;
   display: block;
 }
-@media (max-width: 480px) {
-  .info__video { width: 70%; margin-left: auto; }
+@media (max-width: 640px) {
+  .info__video { width: 62%; margin-left: auto; }
 }
 
 /* ---------- selected work link below the grid ---------- */

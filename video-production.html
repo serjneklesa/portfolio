@@ -6,6 +6,8 @@
   <title>Video Production — Serj Neklesa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://player.vimeo.com">
+  <link rel="preconnect" href="https://i.vimeocdn.com">
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -37,6 +39,17 @@
     </div>
     <div class="panorama panorama--video">
       <div class="panorama__track" data-row="2"></div>
+    </div>
+
+    <div class="content">
+      <section class="section" id="lets-create">
+        <p class="eyebrow">Let's Create</p>
+        <p class="invite">
+          Hi! Got an idea, a brand, or just a feeling?<br>
+          <em>Let's create something together.</em>
+        </p>
+        <p class="invite-link"><a href="mailto:neklesa.sergej@gmail.com">Say hello ↗</a></p>
+      </section>
     </div>
   </main>
 
@@ -78,45 +91,61 @@
     const HASHES = {"1210442646": "eba0e2037d", "1210442671": "bf5715b22d", "1210442695": "1366e94a4b", "1210442717": "c62bf89a0a", "1210442742": "bdb9a1750c", "1210442745": "1aa7bc77d4", "1210442799": "1704214c0f", "1210442843": "85bad5aafd", "1210442886": "b5ee377771"};
     const SPEED = 45; // px per second
 
-    async function ratioOf(id) {
+    async function metaOf(id) {
       try {
         const r = await fetch("https://vimeo.com/api/oembed.json?url=" +
           encodeURIComponent("https://vimeo.com/" + id + (HASHES[id] ? "/" + HASHES[id] : "")));
         const j = await r.json();
-        if (j.width && j.height) return j.width + " / " + j.height;
-      } catch (e) {}
-      return "16 / 9";
+        return {
+          id,
+          ratio: (j.width && j.height) ? j.width + " / " + j.height : "16 / 9",
+          thumb: j.thumbnail_url || "",
+        };
+      } catch (e) { return null; } // unavailable video -> skipped entirely
     }
 
-    function makeCell(id, ratio) {
+    function makeCell(m) {
       const cell = document.createElement("div");
       cell.className = "pan-v";
-      cell.style.aspectRatio = ratio;
+      cell.style.aspectRatio = m.ratio;
+      const img = document.createElement("img");
+      img.src = m.thumb;
+      img.alt = "";
+      img.decoding = "async";
+      img.style.cssText = "width:100%;height:100%;object-fit:cover;display:block";
+      cell.appendChild(img);
+      cell.dataset.id = m.id;
+      return cell;
+    }
+
+    function activate(cell) {
+      const id = cell.dataset.id;
       const f = document.createElement("iframe");
       f.src = "https://player.vimeo.com/video/" + id +
               "?background=1&autoplay=1&muted=1&loop=1&playsinline=1" +
               (HASHES[id] ? "&h=" + HASHES[id] : "");
       f.title = "Video " + id;
-      f.loading = "lazy";
       f.allow = "autoplay; fullscreen; picture-in-picture";
-      cell.appendChild(f);
-      return cell;
+      cell.replaceChildren(f);
     }
 
     async function build() {
-      const meta = await Promise.all(
-        VIDEOS.map(async id => ({ id, ratio: await ratioOf(id) }))
-      );
+      const meta = (await Promise.all(VIDEOS.map(metaOf))).filter(Boolean);
 
       // split the videos across the three rows
       const rows = [[], [], []];
       meta.forEach((m, i) => rows[i % 3].push(m));
       rows[1].reverse(); // middle row runs right and starts from the end
 
+      const cells = [];
       document.querySelectorAll(".panorama--video .panorama__track").forEach(track => {
         const list = rows[+track.dataset.row] || [];
         // two identical copies -> seamless -50% loop
-        [...list, ...list].forEach(m => track.appendChild(makeCell(m.id, m.ratio)));
+        [...list, ...list].forEach(m => {
+          const c = makeCell(m);
+          track.appendChild(c);
+          cells.push(c);
+        });
       });
 
       const setDurations = () => {
@@ -128,9 +157,17 @@
         });
       };
       setDurations();
-      setTimeout(setDurations, 3000);
+      setTimeout(setDurations, 2500);
+
+      // bring players alive gradually so the page loads fast
+      let i = 0;
+      const timer = setInterval(() => {
+        if (i >= cells.length) return clearInterval(timer);
+        activate(cells[i++]);
+      }, 350);
     }
     build();
+
   </script>
 
 </body>
