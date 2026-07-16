@@ -66,9 +66,27 @@
       "sample-1.jpg", "sample-2.jpg", "sample-3.jpg",
       "sasha-1.jpg", "summer-cover-2.jpg", "uj1-2.jpg",
       "untitled-4-recovered.jpg",
+      "1232.jpg",
+      "6 4.JPG",
+      "ytyty.jpg",
+      "popup3.jpg",
+      "sera poster.jpg",
+      "туц сщддусешщт.jpg",
+      "parfeniuk 5.JPG",
+      "parfeniuk 16.JPG",
     ];
 
     const SPEED = 60; // px per second
+
+    // --- series detection: photos from one series must not stand next to each other ---
+    function groupOf(name) {
+      let n = name.replace(/\.jpe?g$/i, "");
+      if (/^parfen/i.test(n)) return "parfeniuk";          // parfeniuk-3 / parfenuiuk-wall-2 ...
+      if (/^\d/.test(n)) return n.split("-")[0];           // "7-1", "7-2" -> "7"; "4", "4-2" -> "4"
+      n = n.replace(/-\d+$/, "");                          // sample-1 -> sample, img-2845-2 -> img-2845
+      n = n.replace(/([a-z])\d+$/i, "$1");                 // katarina7 -> katarina, kadr1943 -> kadr
+      return n;
+    }
 
     function shuffle(arr) {
       const a = [...arr];
@@ -79,10 +97,41 @@
       return a;
     }
 
+    // shuffle + repair so that no two neighbours share a series
+    // (including the loop seam: last item meets first item)
+    function spreadShuffle(list) {
+      let a = shuffle(list);
+      const n = a.length;
+      for (let pass = 0; pass < 30; pass++) {
+        let ok = true;
+        for (let i = 0; i < n; i++) {
+          const prev = a[(i - 1 + n) % n];
+          if (groupOf(a[i]) === groupOf(prev)) {
+            ok = false;
+            for (let j = 0; j < n; j++) {
+              const jPrev = a[(j - 1 + n) % n];
+              const jNext = a[(j + 1) % n];
+              if (
+                j !== i &&
+                groupOf(a[j]) !== groupOf(prev) &&
+                groupOf(a[i]) !== groupOf(jPrev) &&
+                groupOf(a[i]) !== groupOf(jNext)
+              ) {
+                [a[i], a[j]] = [a[j], a[i]];
+                break;
+              }
+            }
+          }
+        }
+        if (ok) break;
+      }
+      return a;
+    }
+
     const rows = {
-      forward:  IMAGES,
-      backward: [...IMAGES].reverse(),
-      random:   shuffle(IMAGES),
+      forward:  spreadShuffle(IMAGES),
+      backward: spreadShuffle(IMAGES),
+      random:   spreadShuffle(IMAGES),
     };
 
     document.querySelectorAll(".panorama__track").forEach(track => {
@@ -90,7 +139,7 @@
       // two identical copies -> seamless -50% loop
       [...list, ...list].forEach(name => {
         const img = document.createElement("img");
-        img.src = FOLDER + name;
+        img.src = FOLDER + encodeURIComponent(name); // handles spaces & cyrillic in filenames
         img.alt = "";
         img.decoding = "async";
         img.onerror = () => img.remove(); // missing file -> skip silently
