@@ -62,6 +62,7 @@
       "1210223333",
       "1210223165",
       "1210221413",
+      "1210221409",
     ];
 
     const SM_PHOTOS = [
@@ -75,12 +76,13 @@
       "ytyty.jpg",
     ];
 
+    const HASHES = {"1210442646": "eba0e2037d", "1210442671": "bf5715b22d", "1210442695": "1366e94a4b", "1210442717": "c62bf89a0a", "1210442742": "bdb9a1750c", "1210442745": "1aa7bc77d4", "1210442799": "1704214c0f", "1210442843": "85bad5aafd", "1210442886": "b5ee377771"};
     const SPEED = 45; // px per second
 
     async function ratioOf(id) {
       try {
         const r = await fetch("https://vimeo.com/api/oembed.json?url=" +
-          encodeURIComponent("https://vimeo.com/" + id));
+          encodeURIComponent("https://vimeo.com/" + id + (HASHES[id] ? "/" + HASHES[id] : "")));
         const j = await r.json();
         if (j.width && j.height) return j.width + " / " + j.height;
       } catch (e) {}
@@ -93,7 +95,8 @@
       cell.style.aspectRatio = ratio;
       const f = document.createElement("iframe");
       f.src = "https://player.vimeo.com/video/" + id +
-              "?background=1&autoplay=1&muted=1&loop=1&playsinline=1";
+              "?background=1&autoplay=1&muted=1&loop=1&playsinline=1" +
+              (HASHES[id] ? "&h=" + HASHES[id] : "");
       f.title = "Video " + id;
       f.loading = "lazy";
       f.allow = "autoplay; fullscreen; picture-in-picture";
