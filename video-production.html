@@ -28,9 +28,15 @@
       </header>
     </div>
 
-    <!-- looping panorama of playing videos -->
+    <!-- looping panoramas of playing videos: left / right / left -->
     <div class="panorama panorama--video">
-      <div class="panorama__track" id="video-track"></div>
+      <div class="panorama__track" data-row="0"></div>
+    </div>
+    <div class="panorama panorama--video panorama--reverse">
+      <div class="panorama__track" data-row="1"></div>
+    </div>
+    <div class="panorama panorama--video">
+      <div class="panorama__track" data-row="2"></div>
     </div>
   </main>
 
@@ -56,7 +62,6 @@
       "1210223165",
     ];
 
-    const track = document.getElementById("video-track");
     const SPEED = 45; // px per second
 
     async function ratioOf(id) {
@@ -87,17 +92,28 @@
       const meta = await Promise.all(
         VIDEOS.map(async id => ({ id, ratio: await ratioOf(id) }))
       );
-      // two identical copies -> seamless -50% loop
-      [...meta, ...meta].forEach(m => track.appendChild(makeCell(m.id, m.ratio)));
 
-      const setDuration = () => {
-        const distance = track.scrollWidth / 2;
-        if (distance > 0) {
-          track.style.setProperty("--pan-duration", Math.max(30, distance / SPEED) + "s");
-        }
+      // split the videos across the three rows
+      const rows = [[], [], []];
+      meta.forEach((m, i) => rows[i % 3].push(m));
+      rows[1].reverse(); // middle row runs right and starts from the end
+
+      document.querySelectorAll(".panorama--video .panorama__track").forEach(track => {
+        const list = rows[+track.dataset.row] || [];
+        // two identical copies -> seamless -50% loop
+        [...list, ...list].forEach(m => track.appendChild(makeCell(m.id, m.ratio)));
+      });
+
+      const setDurations = () => {
+        document.querySelectorAll(".panorama--video .panorama__track").forEach(track => {
+          const distance = track.scrollWidth / 2;
+          if (distance > 0) {
+            track.style.setProperty("--pan-duration", Math.max(30, distance / SPEED) + "s");
+          }
+        });
       };
-      setDuration();
-      setTimeout(setDuration, 3000);
+      setDurations();
+      setTimeout(setDurations, 3000);
     }
     build();
   </script>

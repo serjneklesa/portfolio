@@ -467,7 +467,7 @@ button:focus-visible {
 /* ---------- video panorama (Video Production) ---------- */
 .panorama--video .panorama__track { align-items: stretch; }
 .pan-v {
-  height: min(44vh, 420px);
+  height: min(27vh, 280px);
   aspect-ratio: 16 / 9; /* refined per video by script */
   flex: none;
 }
@@ -478,5 +478,5 @@ button:focus-visible {
   display: block;
 }
 @media (max-width: 640px) {
-  .pan-v { height: 30vh; }
+  .pan-v { height: 20vh; }
 }
