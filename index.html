@@ -53,16 +53,14 @@
             <li><a href="#" target="_blank" rel="noopener">Instagram</a></li>
           </ul>
         </div>
-        <div>
-          <h2><a href="selected-work.html">Selected Work <span class="arrow">→</span></a></h2>
+        <div class="info__video" id="info-video">
+          <iframe src="https://player.vimeo.com/video/587701845?background=1&autoplay=1&muted=1&loop=1&playsinline=1" title="Video" allow="autoplay; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
       </section>
 
-      <!-- Home video -->
-      <section class="home-video">
-        <div class="home-video__frame">
-          <iframe src="https://player.vimeo.com/video/587701845?background=1&autoplay=1&muted=1&loop=1&playsinline=1" title="Video" allow="autoplay; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        </div>
+      <!-- Selected Work link (swapped with the video) -->
+      <section class="home-cta">
+        <a href="selected-work.html">Selected Work <span class="arrow">→</span></a>
       </section>
 
       <!-- Experience -->
@@ -157,6 +155,21 @@
       <span>Made in Vienna</span>
     </div>
   </footer>
+
+  <script>
+    // ask Vimeo for the real aspect ratio of each video so the frame
+    // matches the video exactly (no black bars / visible container)
+    async function fitVimeo(el, id) {
+      try {
+        const r = await fetch("https://vimeo.com/api/oembed.json?url=" +
+          encodeURIComponent("https://vimeo.com/" + id));
+        const j = await r.json();
+        if (j.width && j.height) el.style.aspectRatio = j.width + " / " + j.height;
+      } catch (e) {}
+    }
+    fitVimeo(document.querySelector(".hero__video"), "1209245580");
+    fitVimeo(document.getElementById("info-video"), "587701845");
+  </script>
 
 </body>
 </html>

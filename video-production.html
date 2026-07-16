@@ -28,7 +28,10 @@
       </header>
     </div>
 
-    <div class="content" id="vp-list"><!-- videos are laid out here by script --></div>
+    <!-- looping panorama of playing videos -->
+    <div class="panorama panorama--video">
+      <div class="panorama__track" id="video-track"></div>
+    </div>
   </main>
 
   <footer class="footer">
@@ -39,7 +42,7 @@
   </footer>
 
   <script>
-    // Vimeo IDs в исходном порядке
+    // Vimeo IDs в порядке показа
     const VIDEOS = [
       "1209432137",
       "1209429198",
@@ -48,77 +51,53 @@
       "587697482",
       "1210223333",
       "1210221415",
+      "587411131",
+      "1210221412",
+      "1210223165",
     ];
 
-    const container = document.getElementById("vp-list");
+    const track = document.getElementById("video-track");
+    const SPEED = 45; // px per second
 
-    function makeIframe(id) {
+    async function ratioOf(id) {
+      try {
+        const r = await fetch("https://vimeo.com/api/oembed.json?url=" +
+          encodeURIComponent("https://vimeo.com/" + id));
+        const j = await r.json();
+        if (j.width && j.height) return j.width + " / " + j.height;
+      } catch (e) {}
+      return "16 / 9";
+    }
+
+    function makeCell(id, ratio) {
+      const cell = document.createElement("div");
+      cell.className = "pan-v";
+      cell.style.aspectRatio = ratio;
       const f = document.createElement("iframe");
       f.src = "https://player.vimeo.com/video/" + id +
-              "?autoplay=1&muted=1&loop=1&playsinline=1";
+              "?background=1&autoplay=1&muted=1&loop=1&playsinline=1";
       f.title = "Video " + id;
       f.loading = "lazy";
       f.allow = "autoplay; fullscreen; picture-in-picture";
-      f.allowFullscreen = true;
-      return f;
-    }
-
-    // Determine orientation of each video via Vimeo's public oEmbed API
-    async function getOrientation(id) {
-      try {
-        const r = await fetch(
-          "https://vimeo.com/api/oembed.json?url=" +
-          encodeURIComponent("https://vimeo.com/" + id)
-        );
-        const j = await r.json();
-        return j.height > j.width ? "v" : "h";
-      } catch (e) {
-        return "h"; // fallback: treat as horizontal
-      }
+      cell.appendChild(f);
+      return cell;
     }
 
     async function build() {
       const meta = await Promise.all(
-        VIDEOS.map(async id => ({ id, o: await getOrientation(id) }))
+        VIDEOS.map(async id => ({ id, ratio: await ratioOf(id) }))
       );
+      // two identical copies -> seamless -50% loop
+      [...meta, ...meta].forEach(m => track.appendChild(makeCell(m.id, m.ratio)));
 
-      const verticals = meta.filter(m => m.o === "v");
-      const horizontals = meta.filter(m => m.o === "h");
-
-      // Правило: два вертикальных в ряд, после них — горизонтальный
-      while (verticals.length || horizontals.length) {
-        if (verticals.length >= 2) {
-          const row = document.createElement("div");
-          row.className = "vp-pair";
-          for (const m of verticals.splice(0, 2)) {
-            const cell = document.createElement("div");
-            cell.className = "vp-v";
-            cell.appendChild(makeIframe(m.id));
-            row.appendChild(cell);
-          }
-          container.appendChild(row);
-          if (horizontals.length) {
-            const wide = document.createElement("div");
-            wide.className = "vp-wide";
-            wide.appendChild(makeIframe(horizontals.shift().id));
-            container.appendChild(wide);
-          }
-        } else if (horizontals.length) {
-          const wide = document.createElement("div");
-          wide.className = "vp-wide";
-          wide.appendChild(makeIframe(horizontals.shift().id));
-          container.appendChild(wide);
-        } else {
-          // остался один вертикальный без пары — показываем его одного в ряду
-          const row = document.createElement("div");
-          row.className = "vp-pair";
-          const cell = document.createElement("div");
-          cell.className = "vp-v";
-          cell.appendChild(makeIframe(verticals.shift().id));
-          row.appendChild(cell);
-          container.appendChild(row);
+      const setDuration = () => {
+        const distance = track.scrollWidth / 2;
+        if (distance > 0) {
+          track.style.setProperty("--pan-duration", Math.max(30, distance / SPEED) + "s");
         }
-      }
+      };
+      setDuration();
+      setTimeout(setDuration, 3000);
     }
     build();
   </script>

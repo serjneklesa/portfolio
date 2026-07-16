@@ -117,9 +117,9 @@ button:focus-visible {
 .hero__video {
   position: absolute;
   z-index: 1; /* under the text */
-  left: 58%;
+  left: 56%;
   top: 32%;
-  width: clamp(200px, 42vw, 620px);
+  width: clamp(180px, 28vw, 440px);
   aspect-ratio: 16 / 9;
   overflow: hidden;
   /* no frame, no background: nothing visible except the video itself */
@@ -154,7 +154,8 @@ button:focus-visible {
 /* ---------- info columns ---------- */
 .info {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr 1fr 1.6fr;
+  align-items: start;
   gap: 32px;
   padding: clamp(48px, 7vw, 110px) 0;
   font-size: 16px;
@@ -441,22 +442,41 @@ button:focus-visible {
 }
 
 
-/* ---------- home video between info and experience ---------- */
-.home-video {
-  padding: clamp(20px, 4vw, 56px) 0;
-  display: flex;
-  justify-content: flex-end;
+/* ---------- video in the info grid (opposite Social) ---------- */
+.info__video {
+  aspect-ratio: 16 / 9; /* refined by script to the video's real ratio */
 }
-.home-video__frame {
-  width: min(48%, 560px);
-  aspect-ratio: 16 / 9;
+.info__video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
 }
-.home-video__frame iframe {
+@media (max-width: 480px) {
+  .info__video { width: 70%; margin-left: auto; }
+}
+
+/* ---------- selected work link below the grid ---------- */
+.home-cta {
+  padding: clamp(8px, 2vw, 24px) 0 clamp(24px, 4vw, 48px);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+
+/* ---------- video panorama (Video Production) ---------- */
+.panorama--video .panorama__track { align-items: stretch; }
+.pan-v {
+  height: min(44vh, 420px);
+  aspect-ratio: 16 / 9; /* refined per video by script */
+  flex: none;
+}
+.pan-v iframe {
   width: 100%;
   height: 100%;
   border: 0;
   display: block;
 }
 @media (max-width: 640px) {
-  .home-video__frame { width: 52vw; margin-right: 6vw; }
+  .pan-v { height: 30vh; }
 }

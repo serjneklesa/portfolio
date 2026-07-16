@@ -76,6 +76,10 @@
       "parfeniuk 16.JPG",
       "scrt.png",
       "232218.png",
+      "cachaca.jpg",
+      "blody-mery.jpg",
+      "nk-adicta-scaled.jpg",
+      "img-2746-2.jpg",
     ];
 
     const SPEED = 60; // px per second
@@ -83,7 +87,8 @@
     // --- series detection: photos from one series must not stand next to each other ---
     function groupOf(name) {
       let n = name.replace(/\.(jpe?g|png)$/i, "");
-      if (/^parfen/i.test(n)) return "parfeniuk";          // parfeniuk-3 / parfenuiuk-wall-2 ...
+      if (/^parfen/i.test(n)) return "parfeniuk";
+      if (/^(nk-|cachaca|blody-mery)/i.test(n) || n === "img-2746-2") return "nk";          // parfeniuk-3 / parfenuiuk-wall-2 ...
       if (/^\d/.test(n)) return n.split("-")[0];           // "7-1", "7-2" -> "7"; "4", "4-2" -> "4"
       n = n.replace(/-\d+$/, "");                          // sample-1 -> sample, img-2845-2 -> img-2845
       n = n.replace(/([a-z])\d+$/i, "$1");                 // katarina7 -> katarina, kadr1943 -> kadr
