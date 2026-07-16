@@ -130,6 +130,14 @@ button:focus-visible {
   border: 0;
   display: block;
 }
+@media (max-width: 640px) {
+  /* on phones the video stays under the text, in the green-marked zone */
+  .hero__video {
+    left: 30%;
+    top: 15%;
+    width: 54vw;
+  }
+}
 .hero__lede {
   margin-top: clamp(40px, 6vw, 96px);
   margin-left: auto;
@@ -430,4 +438,25 @@ button:focus-visible {
   height: 100%;
   border: 0;
   display: block;
+}
+
+
+/* ---------- home video between info and experience ---------- */
+.home-video {
+  padding: clamp(20px, 4vw, 56px) 0;
+  display: flex;
+  justify-content: flex-end;
+}
+.home-video__frame {
+  width: min(48%, 560px);
+  aspect-ratio: 16 / 9;
+}
+.home-video__frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+@media (max-width: 640px) {
+  .home-video__frame { width: 52vw; margin-right: 6vw; }
 }
