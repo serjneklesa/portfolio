@@ -28,7 +28,7 @@
       </header>
     </div>
 
-    <!-- looping panoramas of playing videos: left / right / left -->
+    <!-- looping panoramas of playing videos: directions alternate -->
     <div class="panorama panorama--video">
       <div class="panorama__track" data-row="0"></div>
     </div>
@@ -37,6 +37,12 @@
     </div>
     <div class="panorama panorama--video">
       <div class="panorama__track" data-row="2"></div>
+    </div>
+    <div class="panorama panorama--video panorama--reverse">
+      <div class="panorama__track" data-row="3"></div>
+    </div>
+    <div class="panorama panorama--video">
+      <div class="panorama__track" data-row="4"></div>
     </div>
   </main>
 
@@ -60,6 +66,19 @@
       "587411131",
       "1210221412",
       "1210223165",
+      "1210442697",
+      "1210442671",
+      "1210442851",
+      "1210442646",
+      "1210442742",
+      "1210442799",
+      "1210442886",
+      "1210442745",
+      "1210442843",
+      "1210442790",
+      "1210442695",
+      "1210442717",
+      "1210449640",
     ];
 
     const SPEED = 45; // px per second
@@ -93,10 +112,11 @@
         VIDEOS.map(async id => ({ id, ratio: await ratioOf(id) }))
       );
 
-      // split the videos across the three rows
-      const rows = [[], [], []];
-      meta.forEach((m, i) => rows[i % 3].push(m));
-      rows[1].reverse(); // middle row runs right and starts from the end
+      // split the videos across the five rows
+      const rows = [[], [], [], [], []];
+      meta.forEach((m, i) => rows[i % 5].push(m));
+      rows[1].reverse(); // right-running rows start from the end
+      rows[3].reverse();
 
       document.querySelectorAll(".panorama--video .panorama__track").forEach(track => {
         const list = rows[+track.dataset.row] || [];

@@ -22,18 +22,21 @@
 
   <main class="page">
     <div class="content">
-
       <header class="case-head">
         <h1 class="reveal">Social Media</h1>
         <p class="case-sub reveal">Content strategy and creation for social platforms.</p>
       </header>
+    </div>
 
-      <section class="case-body">
-        <div class="media media--photo"><span>Project Visual</span></div>
-        <div class="media media--photo"><span>Project Visual</span></div>
-        <div class="media media--photo"><span>Project Visual</span></div>
-      </section>
-
+    <!-- looping panoramas mixing videos and photos -->
+    <div class="panorama panorama--video">
+      <div class="panorama__track" data-row="0"></div>
+    </div>
+    <div class="panorama panorama--video panorama--reverse">
+      <div class="panorama__track" data-row="1"></div>
+    </div>
+    <div class="panorama panorama--video">
+      <div class="panorama__track" data-row="2"></div>
     </div>
   </main>
 
@@ -43,6 +46,109 @@
       <span>Made in Vienna</span>
     </div>
   </footer>
+
+  <script>
+    const FOLDER = "web-ready/";
+
+    const SM_VIDEOS = [
+      "1210442717",
+      "1210442790",
+      "1210442843",
+      "1210442799",
+      "1210442886",
+      "1210442697",
+      "1210222827",
+      "587397666",
+      "1210223333",
+      "1210223165",
+      "1210221413",
+    ];
+
+    const SM_PHOTOS = [
+      "3-4.jpg",
+      "4-3.jpg",
+      "5-5.jpg",
+      "flooriist-lenta-2.jpg",
+      "image-13-01-26-at-14-47.jpg",
+      "popup3.jpg",
+      "1232.jpg",
+      "ytyty.jpg",
+    ];
+
+    const SPEED = 45; // px per second
+
+    async function ratioOf(id) {
+      try {
+        const r = await fetch("https://vimeo.com/api/oembed.json?url=" +
+          encodeURIComponent("https://vimeo.com/" + id));
+        const j = await r.json();
+        if (j.width && j.height) return j.width + " / " + j.height;
+      } catch (e) {}
+      return "16 / 9";
+    }
+
+    function videoCell(id, ratio) {
+      const cell = document.createElement("div");
+      cell.className = "pan-v";
+      cell.style.aspectRatio = ratio;
+      const f = document.createElement("iframe");
+      f.src = "https://player.vimeo.com/video/" + id +
+              "?background=1&autoplay=1&muted=1&loop=1&playsinline=1";
+      f.title = "Video " + id;
+      f.loading = "lazy";
+      f.allow = "autoplay; fullscreen; picture-in-picture";
+      cell.appendChild(f);
+      return () => cell.cloneNode(true);
+    }
+
+    function photoCell(name) {
+      return () => {
+        const img = document.createElement("img");
+        img.src = FOLDER + encodeURIComponent(name);
+        img.alt = "";
+        img.decoding = "async";
+        img.onerror = () => img.remove();
+        return img;
+      };
+    }
+
+    async function build() {
+      const vids = await Promise.all(
+        SM_VIDEOS.map(async id => videoCell(id, await ratioOf(id)))
+      );
+      const photos = SM_PHOTOS.map(photoCell);
+
+      // interleave: video, photo, video, photo...
+      const mixed = [];
+      const a = [...vids], b = [...photos];
+      while (a.length || b.length) {
+        if (a.length) mixed.push(a.shift());
+        if (b.length) mixed.push(b.shift());
+      }
+
+      const rows = [[], [], []];
+      mixed.forEach((make, i) => rows[i % 3].push(make));
+      rows[1].reverse();
+
+      document.querySelectorAll(".panorama__track").forEach(track => {
+        const list = rows[+track.dataset.row] || [];
+        // two identical copies -> seamless -50% loop
+        [...list, ...list].forEach(make => track.appendChild(make()));
+      });
+
+      const setDurations = () => {
+        document.querySelectorAll(".panorama__track").forEach(track => {
+          const distance = track.scrollWidth / 2;
+          if (distance > 0) {
+            track.style.setProperty("--pan-duration", Math.max(30, distance / SPEED) + "s");
+          }
+        });
+      };
+      setDurations();
+      setTimeout(setDurations, 3000);
+    }
+    build();
+  </script>
 
 </body>
 </html>

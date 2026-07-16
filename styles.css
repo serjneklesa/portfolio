@@ -480,3 +480,13 @@ button:focus-visible {
 @media (max-width: 640px) {
   .pan-v { height: 20vh; }
 }
+
+.panorama--video .panorama__track img {
+  height: min(27vh, 280px);
+  width: auto;
+  flex: none;
+  display: block;
+}
+@media (max-width: 640px) {
+  .panorama--video .panorama__track img { height: 20vh; }
+}
